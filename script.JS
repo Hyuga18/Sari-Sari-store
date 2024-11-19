@@ -1,5 +1,12 @@
-let incomeData = {};
+// Load income data from local storage or initialize an empty object
+let incomeData = JSON.parse(localStorage.getItem("incomeData")) || {};
 
+// Function to save income data to local storage
+function saveIncomeData() {
+    localStorage.setItem("incomeData", JSON.stringify(incomeData));
+}
+
+// Function to add income
 function addIncome() {
     const date = document.getElementById("date").value;
     const amount = parseFloat(document.getElementById("amount").value);
@@ -15,11 +22,18 @@ function addIncome() {
         incomeData[date] = amount;
     }
 
+    // Save to local storage
+    saveIncomeData();
+
     alert(`Added ₱${amount.toFixed(2)} income for ${date}`);
     document.getElementById("date").value = "";
     document.getElementById("amount").value = "";
+
+    // Update the income list
+    viewIncome();
 }
 
+// Function to view income
 function viewIncome() {
     const incomeList = document.getElementById("income-records");
     incomeList.innerHTML = ""; // Clear previous records
@@ -36,10 +50,11 @@ function viewIncome() {
     }
 }
 
+// Function to display income summary
 function incomeSummary() {
     const totalIncome = Object.values(incomeData).reduce((sum, income) => sum + income, 0);
     const totalDays = Object.keys(incomeData).length;
-    const averageIncome = totalIncome / totalDays;
+    const averageIncome = totalDays > 0 ? totalIncome / totalDays : 0;
 
     const summarySection = document.getElementById("summary-section");
     summarySection.innerHTML = `
@@ -48,3 +63,8 @@ function incomeSummary() {
         Average Daily Income: ₱${averageIncome.toFixed(2)}
     `;
 }
+
+// Load and display data when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    viewIncome();
+});
