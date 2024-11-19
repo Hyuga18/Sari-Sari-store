@@ -18,6 +18,14 @@
             <button onclick="addIncome()">Add Income</button>
         </div>
 
+            <label for="quantity">Put how many:</label>        
+        <div class="qty-input">
+            <button id="button_minus" class="qty-count qty-count--minus" data-action="minus" type="button">-</button>
+            <input class="product-qty" type="number" name="product-qty" min="0" max="10" value="1">
+            <button id="button_plus" class="qty-count qty-count--add" data-action="add" type="button">+</button>
+        </div>
+            
+
         <div class="income-section">
             <h2>Income Summary</h2>
             <button onclick="viewIncome()">View Income</button>

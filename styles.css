@@ -82,3 +82,22 @@ button:hover {
     font-size: 1.1em;
     font-weight: bold;
 }
+
+#button_minus {
+    background-color: gray; 
+    color: rgb(255, 255, 255); 
+}
+
+#button_plus {
+    background-color: blue; 
+    color: white; 
+}
+
+
+#button_minus:hover {
+    background-color: darkgray;
+}
+
+#button_plus:hover {
+    background-color: darkblue;
+}

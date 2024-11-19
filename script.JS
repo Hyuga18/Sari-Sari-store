@@ -1,14 +1,18 @@
-// Load income data from local storage or initialize an empty object
 let incomeData = JSON.parse(localStorage.getItem("incomeData")) || {};
 
-// Function to save income data to local storage
 function saveIncomeData() {
     localStorage.setItem("incomeData", JSON.stringify(incomeData));
 }
 
-// Function to add income
+function formatDateToLetterForm(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' }; 
+    return date.toLocaleDateString('en-US', options);
+}
+
 function addIncome() {
     const date = document.getElementById("date").value;
+    const formattedDate = formatDateToLetterForm(date); 
     const amount = parseFloat(document.getElementById("amount").value);
     
     if (!date || isNaN(amount) || amount <= 0) {
@@ -16,27 +20,24 @@ function addIncome() {
         return;
     }
 
-    if (incomeData[date]) {
-        incomeData[date] += amount;
+    if (incomeData[formattedDate]) {
+        incomeData[formattedDate] += amount;
     } else {
-        incomeData[date] = amount;
+        incomeData[formattedDate] = amount;
     }
 
-    // Save to local storage
     saveIncomeData();
 
-    alert(`Added ₱${amount.toFixed(2)} income for ${date}`);
+    alert(`Added ₱${amount.toFixed(2)} income for ${formattedDate}`);
     document.getElementById("date").value = "";
     document.getElementById("amount").value = "";
 
-    // Update the income list
     viewIncome();
 }
 
-// Function to view income
 function viewIncome() {
     const incomeList = document.getElementById("income-records");
-    incomeList.innerHTML = ""; // Clear previous records
+    incomeList.innerHTML = "";
 
     if (Object.keys(incomeData).length === 0) {
         incomeList.innerHTML = "<li>No income data recorded yet.</li>";
@@ -50,7 +51,6 @@ function viewIncome() {
     }
 }
 
-// Function to display income summary
 function incomeSummary() {
     const totalIncome = Object.values(incomeData).reduce((sum, income) => sum + income, 0);
     const totalDays = Object.keys(incomeData).length;
@@ -64,7 +64,6 @@ function incomeSummary() {
     `;
 }
 
-// Load and display data when the page loads
 document.addEventListener("DOMContentLoaded", () => {
     viewIncome();
 });
