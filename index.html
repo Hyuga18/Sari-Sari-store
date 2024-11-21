@@ -19,6 +19,10 @@
 
         <!-- Form to add new income -->
         <div class="form-section">
+           
+            <label for="item">What Item:</label>
+            <input type="text" id="item" name="item" required>
+           
             <label for="date">Pick a Date:</label>
             <input type="date" id="date">
             
@@ -26,7 +30,7 @@
             <input type="number" id="amount" step="0.01" placeholder="Enter amount">
             
             <label for="quantity">How many items?</label>        
-            <input type="number" id="quantity" min="1" max="100" value="1">
+            <input type="number" id="quantity" min="1" max="100" value="1" placeholder="ilan">
             
             <button onclick="addIncome()">Add New Income</button>
         </div>
