@@ -4,39 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sari-Sari Store Income Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Sari-Sari Store Income Tracker</h1>
+        <h1 class="animate__animated animate__bounceIn">
+            <img src="store.png" alt="Store Icon" class="header-icon">
+            Sari-Sari Store Income Tracker
+        </h1>
 
+        <!-- Form to add new income -->
         <div class="form-section">
-            <label for="date">Date (YYYY-MM-DD):</label>
+            <label for="date">Pick a Date:</label>
             <input type="date" id="date">
-            <label for="amount">Income Amount (₱):</label>
-            <input type="number" id="amount" step="0.01" placeholder="Enter amount">
-            <button onclick="addIncome()">Add Income</button>
-        </div>
-
-            <label for="quantity">Put how many:</label>        
-        <div class="qty-input">
-            <button id="button_minus" class="qty-count qty-count--minus" data-action="minus" type="button">-</button>
-            <input class="product-qty" type="number" name="product-qty" min="0" max="10" value="1">
-            <button id="button_plus" class="qty-count qty-count--add" data-action="add" type="button">+</button>
-        </div>
             
-
-        <div class="income-section">
-            <h2>Income Summary</h2>
-            <button onclick="viewIncome()">View Income</button>
-            <button onclick="incomeSummary()">Income Summary</button>
+            <label for="amount">Amount (₱):</label>
+            <input type="number" id="amount" step="0.01" placeholder="Enter amount">
+            
+            <label for="quantity">How many items?</label>        
+            <input type="number" id="quantity" min="1" max="100" value="1">
+            
+            <button onclick="addIncome()">Add New Income</button>
         </div>
 
+        <!-- Buttons to view data -->
+        <div class="income-section">
+            <h2>View Your Income</h2>
+            <div class="button-group" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <button onclick="viewIncome()">Show All Records</button>
+                <button onclick="incomeSummary()">Show Summary</button>
+            </div>
+        </div>
+
+        <!-- List of all income records -->
         <div id="income-list">
-            <h3>Recorded Income:</h3>
+            <h3>Your Income Records:</h3>
             <ul id="income-records"></ul>
         </div>
 
+        <!-- Summary statistics -->
         <div id="summary-section" class="summary-section"></div>
     </div>
 

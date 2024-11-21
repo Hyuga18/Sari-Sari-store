@@ -1,36 +1,53 @@
+// Store all our income records
 let incomeData = JSON.parse(localStorage.getItem("incomeData")) || {};
 
+// Save data to browser storage
 function saveIncomeData() {
     localStorage.setItem("incomeData", JSON.stringify(incomeData));
 }
 
-function formatDateToLetterForm(dateString) {
+// Makes dates look nice and readable
+function makeNiceDate(dateString) {
     const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'short', day: 'numeric' }; 
-    return date.toLocaleDateString('en-US', options);
+    return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric'
+    });
 }
 
 function addIncome() {
     const date = document.getElementById("date").value;
-    const formattedDate = formatDateToLetterForm(date); 
+    const niceDate = makeNiceDate(date); 
     const amount = parseFloat(document.getElementById("amount").value);
+    const quantity = parseInt(document.getElementById("quantity").value) || 1;
     
     if (!date || isNaN(amount) || amount <= 0) {
         alert("Please enter valid date and amount.");
         return;
     }
 
-    if (incomeData[formattedDate]) {
-        incomeData[formattedDate] += amount;
-    } else {
-        incomeData[formattedDate] = amount;
+    // Calculate total
+    const total = amount * quantity;
+
+    if (!incomeData[niceDate]) {
+        incomeData[niceDate] = {
+            amount: 0,
+            quantity: 0
+        };
     }
+    incomeData[niceDate].amount += total;
+    incomeData[niceDate].quantity += quantity;
 
     saveIncomeData();
 
-    alert(`Added ₱${amount.toFixed(2)} income for ${formattedDate}`);
+    // Save and show success message
+    alert(`Added ₱${total.toFixed(2)} (${quantity} × ₱${amount.toFixed(2)}) for ${niceDate}`);
+    
+    // Clear form
     document.getElementById("date").value = "";
     document.getElementById("amount").value = "";
+    document.getElementById("quantity").value = "1";
 
     viewIncome();
 }
@@ -44,25 +61,36 @@ function viewIncome() {
         return;
     }
 
-    for (const [date, amount] of Object.entries(incomeData)) {
+    for (const [date, data] of Object.entries(incomeData)) {
         const li = document.createElement("li");
-        li.textContent = `${date}: ₱${amount.toFixed(2)}`;
+        const amount = typeof data === 'number' ? data : data.amount;
+        const quantity = typeof data === 'number' ? '?' : data.quantity;
+        li.textContent = `${date}: ₱${amount.toFixed(2)} (Quantity: ${quantity})`;
         incomeList.appendChild(li);
     }
 }
 
 function incomeSummary() {
-    const totalIncome = Object.values(incomeData).reduce((sum, income) => sum + income, 0);
+    const totalIncome = Object.values(incomeData).reduce((sum, data) => {
+        return sum + (typeof data === 'number' ? data : data.amount);
+    }, 0);
+    const totalQuantity = Object.values(incomeData).reduce((sum, data) => {
+        return sum + (typeof data === 'number' ? 1 : data.quantity);
+    }, 0);
     const totalDays = Object.keys(incomeData).length;
     const averageIncome = totalDays > 0 ? totalIncome / totalDays : 0;
-
+    // Show summary
     const summarySection = document.getElementById("summary-section");
     summarySection.innerHTML = `
         Total Days Recorded: ${totalDays} <br>
         Total Income: ₱${totalIncome.toFixed(2)} <br>
-        Average Daily Income: ₱${averageIncome.toFixed(2)}
+        Total Quantity Sold: ${totalQuantity} <br>
+        Average Daily Income: ₱${averageIncome.toFixed(2)} <br>
+        Total Quantity Sold: ${totalQuantity}
     `;
 }
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     viewIncome();
