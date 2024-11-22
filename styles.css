@@ -170,22 +170,21 @@ body {
 }
 
 #button_minus {
-    background-color: gray; 
+    background-color: #764ba2; 
     color: rgb(255, 255, 255); 
 }
 
 #button_plus {
-    background-color: blue; 
+    background-color: #667eea; 
     color: white; 
 }
 
-
 #button_minus:hover {
-    background-color: darkgray;
+    background-color: #653d91;
 }
 
 #button_plus:hover {
-    background-color: darkblue;
+    background-color: #5a67d8;
 }
 
 #softdrinks{
