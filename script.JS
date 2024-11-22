@@ -24,11 +24,20 @@ function saveIncomeData() {
 }
 
 // Makes dates look nice and readable
-function makeNiceDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
+function makeNiceDate(date) {
+    // Ensure we have a valid Date object
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+        // Return today's date if invalid date is provided
+        return new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+    return dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
         day: 'numeric'
     });
 }
@@ -56,6 +65,25 @@ function updateAmount() {
     document.getElementById("amount").value = total.toFixed(2);
 }
 
+function updateTodaysSummary() {
+    const today = makeNiceDate(new Date().toISOString());
+    const todayData = incomeData[today] || { entries: [] };
+    
+    // Update transaction count
+    const transactionCount = todayData.entries.length;
+    const todayTransactionsElement = document.getElementById("todayTransactions");
+    if (todayTransactionsElement) {
+        todayTransactionsElement.textContent = transactionCount;
+    }
+
+    // Update total sales
+    const todayTotal = todayData.entries.reduce((sum, entry) => sum + entry.amount, 0);
+    const todayTotalElement = document.getElementById("todayTotal");
+    if (todayTotalElement) {
+        todayTotalElement.textContent = `₱${todayTotal.toFixed(2)}`;
+    }
+}
+
 function addIncome() {
     const productSelect = document.getElementById("softdrinks");
     const selectedIndex = productSelect.selectedIndex;
@@ -66,14 +94,14 @@ function addIncome() {
     }
 
     const product = productSelect.value;
-    const date = document.getElementById("date").value;
-    const niceDate = makeNiceDate(date);
+    const currentDate = new Date();
+    const niceDate = makeNiceDate(currentDate);
     const quantity = parseInt(document.getElementById("quantity").value) || 1;
     const price = getProductPrice(product);
     const amount = price * quantity;
     
-    if (!date || isNaN(amount) || amount <= 0) {
-        alert("Please enter valid date and amount.");
+    if (isNaN(amount) || amount <= 0) {
+        alert("Please enter valid amount.");
         return;
     }
 
@@ -91,13 +119,14 @@ function addIncome() {
     });
 
     saveIncomeData();
+    updateTodaysSummary();
 
     // Save and show success message
     alert(`Added ₱${amount.toFixed(2)} (${quantity} × ₱${price.toFixed(2)}) for ${product} on ${niceDate}`);
     
     // Clear form
     productSelect.selectedIndex = 0; // Reset the product selection
-    document.getElementById("date").value = "";
+    
     document.getElementById("amount").value = "";
     document.getElementById("quantity").value = "1";
 
@@ -163,7 +192,7 @@ function editRecord(date, index) {
     
     // Populate form with existing data
     document.getElementById("softdrinks").value = record.product;
-    document.getElementById("date").value = new Date(date).toISOString().split('T')[0];
+    
     document.getElementById("quantity").value = record.quantity;
     updateAmount(); // Update the amount based on product and quantity
     
@@ -186,6 +215,7 @@ function deleteRecord(date, index) {
         saveIncomeData();
         viewIncome();
         incomeSummary();
+        updateTodaysSummary();
     }
 }
 
@@ -284,6 +314,9 @@ function incomeSummary() {
     const summarySection = document.getElementById("summary-section");
     if (!summarySection) return; // Exit if summary section doesn't exist on this page
     
+    const today = makeNiceDate(new Date());
+    
+    // Calculate total summary
     const totalIncome = Object.values(incomeData).reduce((sum, data) => {
         return sum + data.entries.reduce((daySum, entry) => daySum + entry.amount, 0);
     }, 0);
@@ -295,12 +328,25 @@ function incomeSummary() {
     const totalDays = Object.keys(incomeData).length;
     const averageIncome = totalDays > 0 ? totalIncome / totalDays : 0;
     
+    // Calculate today's summary
+    const todayData = incomeData[today] || { entries: [] };
+    const todayIncome = todayData.entries.reduce((sum, entry) => sum + entry.amount, 0);
+    const todayQuantity = todayData.entries.reduce((sum, entry) => sum + entry.quantity, 0);
+    
     // Show summary
     summarySection.innerHTML = `
-        Total Days Recorded: ${totalDays} <br>
-        Total Income: ₱${totalIncome.toFixed(2)} <br>
-        Total Quantity Sold: ${totalQuantity} <br>
-        Average Daily Income: ₱${averageIncome.toFixed(2)}
+        <div class="summary-total">
+            <h3>Total Summary</h3>
+            Total Days Recorded: ${totalDays} <br>
+            Total Income: ₱${totalIncome.toFixed(2)} <br>
+            Total Quantity Sold: ${totalQuantity} <br>
+            Average Daily Income: ₱${averageIncome.toFixed(2)}
+        </div>
+        <div class="summary-today">
+            <h3>Today's Summary (${today})</h3>
+            Today's Income: ₱${todayIncome.toFixed(2)} <br>
+            Today's Quantity Sold: ${todayQuantity} <br>
+        </div>
     `;
 }
 
@@ -401,8 +447,16 @@ function resetAll() {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadIncomeData(); // Load saved data when page loads
+    updateTodaysSummary(); // Initialize today's summary
     
-    // Add event listeners for automatic price updates
-    document.getElementById("softdrinks").addEventListener("change", updateAmount);
-    document.getElementById("quantity").addEventListener("change", updateAmount);
+    // Add event listeners for automatic price updates only if elements exist
+    const softdrinksSelect = document.getElementById("softdrinks");
+    const quantityInput = document.getElementById("quantity");
+    
+    if (softdrinksSelect) {
+        softdrinksSelect.addEventListener("change", updateAmount);
+    }
+    if (quantityInput) {
+        quantityInput.addEventListener("change", updateAmount);
+    }
 });
