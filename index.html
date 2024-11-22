@@ -14,7 +14,7 @@
     <div class="container">
         <h1 class="animate__animated animate__bounceIn">
             <img src="store.png" alt="Store Icon" class="header-icon">
-            Sari-Sari Store Income Tracker
+            Income Tracker
         </h1>
 
         <!-- Form to add new income -->
@@ -88,34 +88,63 @@
                 <textarea id="notes" placeholder="Add any additional notes"></textarea>
             </div>
 
-            <button onclick="addIncome()" class="submit-btn">
-                <i class="fas fa-plus-circle"></i>
-                Add Transaction
-            </button>
+            <div class="button-group">
+                <button onclick="addIncome()" class="submit-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Transaction
+                </button>
+                <a href="records.html" class="view-records-btn">
+                    <i class="fas fa-list"></i>
+                    View Records
+                </a>
+            </div>
         </div>
 
-        <div class="summary-card">
-            <h3>Today's Summary</h3>
-            <div class="summary-stats">
-                <div class="stat-item">
-                    <i class="fas fa-receipt"></i>
-                    <span id="todayTransactions">0</span>
-                    <label>Transactions</label>
+        <div class="dashboard-grid">
+            <div class="summary-card">
+                <h3>Today's Summary</h3>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-receipt"></i>
+                        <span id="todayTransactions">0</span>
+                        <label>Transactions</label>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-peso-sign"></i>
+                        <span id="todayTotal">₱0.00</span>
+                        <label>Total Sales</label>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <i class="fas fa-peso-sign"></i>
-                    <span id="todayTotal">₱0.00</span>
-                    <label>Total Sales</label>
+            </div>
+            
+            <div class="quick-stats-card">
+                <h3><i class="fas fa-chart-line"></i> Quick Stats</h3>
+                <div class="quick-stats-grid">
+                    <div class="stat-box">
+                        <i class="fas fa-clock"></i>
+                        <h4>Last Sale</h4>
+                        <p id="lastSaleTime">No sales yet</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-star"></i>
+                        <h4>Top Product</h4>
+                        <p id="topProduct">-</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-chart-bar"></i>
+                        <h4>Weekly Trend</h4>
+                        <p id="weeklyTrend">+0%</p>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-users"></i>
+                        <h4>Total Customers</h4>
+                        <p id="totalCustomers">0</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="nav-buttons">
-            <a href="records.html" class="nav-button">
-                <i class="fas fa-list"></i> View Records
-            </a>
         </div>
-    </div>
 
     <script src="script.js"></script>
 </body>

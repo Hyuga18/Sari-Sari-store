@@ -14,14 +14,13 @@
     <div class="container">
         <h1 class="animate__animated animate__bounceIn">
             <img src="folder.png" alt="Store Icon" class="header-icon">
-            Income Records
+            Records
         </h1>
+        <a href="index.html" class="nav-button" aria-label="Return to home page">
+            <i class="fas fa-home"></i> Home
+        </a>
 
-        <div class="nav-buttons">
-            <a href="index.html" class="nav-button">
-                <i class="fas fa-plus"></i> Add New Income
-            </a>
-        </div>
+        
 
         <!-- List of all income records -->
         <div id="income-list">
@@ -29,7 +28,7 @@
             <div class="controls">
                 <div class="sort-controls">
                     <label for="sort">Sort by:</label>
-                    <select id="sort" onchange="handleSort(this.value)">
+                    <select id="sort" onchange="handleSort(this.value)" aria-label="Sort records by">
                         <option value="date-desc">Date (Newest First)</option>
                         <option value="date-asc">Date (Oldest First)</option>
                         <option value="amount-desc">Amount (Highest First)</option>
@@ -38,7 +37,7 @@
                 </div>
                 <div class="filter-controls">
                     <label for="filter">Filter by product:</label>
-                    <select id="filter" onchange="handleFilter(this.value)">
+                    <select id="filter" onchange="handleFilter(this.value)" aria-label="Filter records by product">
                         <option value="">All Products</option>
                         <option value="Longganisa">Longganisa</option>
                         <option value="Siomai">Siomai</option>
