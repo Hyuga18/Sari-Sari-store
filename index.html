@@ -20,14 +20,42 @@
         <!-- Form to add new income -->
         <div class="form-section">
            
-            <label for="item">What Item:</label>
-            <input type="text" id="item" name="item" required>
-           
+            <label for="Product">Choose what kind of Product</label>
+            <select name="product" id="softdrinks" class="product-select">
+                <option value="" disabled selected>Select a Product</option>
+                <optgroup label="Food Items">
+                    <option value="Longganisa">Longganisa</option>
+                    <option value="Siomai">Siomai</option>
+                    <option value="Tocino">Tocino</option>
+                    <option value="Hotdog">Hotdog</option>
+                    <option value="Corned Beef">Corned Beef</option>
+                </optgroup>
+                <optgroup label="Beverages">
+                    <option value="Coke">Coke</option>
+                    <option value="Pepsi">Pepsi</option>
+                    <option value="Mountain Dew">Mountain Dew</option>
+                    <option value="Royal">Royal</option>
+                    <option value="Sprite">Sprite</option>
+                    <option value="C2">C2</option>
+                </optgroup>
+                <optgroup label="Snacks">
+                    <option value="Chippy">Chippy</option>
+                    <option value="Piattos">Piattos</option>
+                    <option value="Nova">Nova</option>
+                    <option value="Clover">Clover</option>
+                </optgroup>
+                <optgroup label="Instant Noodles">
+                    <option value="Lucky Me Pancit Canton">Lucky Me Pancit Canton</option>
+                    <option value="Payless">Payless</option>
+                    <option value="Quick Chow">Quick Chow</option>
+                </optgroup>
+            </select>
+
             <label for="date">Pick a Date:</label>
             <input type="date" id="date">
             
             <label for="amount">Amount (₱):</label>
-            <input type="number" id="amount" step="0.01" placeholder="Enter amount">
+            <input type="number" id="amount" step="0.01" placeholder="Amount will be calculated" readonly>
             
             <label for="quantity">How many items?</label>        
             <input type="number" id="quantity" min="1" max="100" value="1" placeholder="ilan">
@@ -35,25 +63,13 @@
             <button onclick="addIncome()">Add New Income</button>
         </div>
 
-        <!-- Buttons to view data -->
-        <div class="income-section">
-            <h2>View Your Income</h2>
-            <div class="button-group" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-                <button onclick="viewIncome()">Show All Records</button>
-                <button onclick="incomeSummary()">Show Summary</button>
-            </div>
+        <div class="nav-buttons">
+            <a href="records.html" class="nav-button">
+                <i class="fas fa-list"></i> View Records
+            </a>
         </div>
-
-        <!-- List of all income records -->
-        <div id="income-list">
-            <h3>Your Income Records:</h3>
-            <ul id="income-records"></ul>
-        </div>
-
-        <!-- Summary statistics -->
-        <div id="summary-section" class="summary-section"></div>
     </div>
 
-    <script src="script.JS"></script>
+    <script src="script.js"></script>
 </body>
 </html>

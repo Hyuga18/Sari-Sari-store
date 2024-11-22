@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Records - Sari-Sari Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="animate__animated animate__bounceIn">
+            <img src="folder.png" alt="Store Icon" class="header-icon">
+            Income Records
+        </h1>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-button">
+                <i class="fas fa-plus"></i> Add New Income
+            </a>
+        </div>
+
+        <!-- List of all income records -->
+        <div id="income-list">
+            <h2><img src="folder.png" alt="folder" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">Your Income Records</h2>
+            <div class="controls">
+                <div class="sort-controls">
+                    <label for="sort">Sort by:</label>
+                    <select id="sort" onchange="handleSort(this.value)">
+                        <option value="date-desc">Date (Newest First)</option>
+                        <option value="date-asc">Date (Oldest First)</option>
+                        <option value="amount-desc">Amount (Highest First)</option>
+                        <option value="amount-asc">Amount (Lowest First)</option>
+                    </select>
+                </div>
+                <div class="filter-controls">
+                    <label for="filter">Filter by product:</label>
+                    <select id="filter" onchange="handleFilter(this.value)">
+                        <option value="">All Products</option>
+                        <option value="Longganisa">Longganisa</option>
+                        <option value="Siomai">Siomai</option>
+                        <option value="Coke">Coke</option>
+                        <option value="MT">Mountain Dew</option>
+                        <option value="Royal">Royal</option>
+                        <option value="Sprite">Sprite</option>
+                    </select>
+                </div>
+                <button onclick="exportToCSV()" class="export-btn">
+                    <i class="fas fa-download"></i> Export to CSV
+                </button>
+            </div>
+            <ul id="income-records" class="editable-records"></ul>
+        </div>
+
+        <div id="summary-section" class="summary-section">
+            <h2>Income Summary</h2>
+            <div class="summary-stats">
+                <div class="stat">
+                    <h3>Total Income</h3>
+                    <p id="total-income">₱0.00</p>
+                </div>
+                <div class="stat">
+                    <h3>Average Income</h3>
+                    <p id="average-income">₱0.00</p>
+                </div>
+                <div class="stat">
+                    <h3>Number of Records</h3>
+                    <p id="num-records">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+            <button onclick="resetAll()" id="reset">Reset All Data</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadIncomeData(); // Load saved data when records page loads
+            console.log("Income Data:", incomeData); // Debug log
+        });
+    </script>
+</body>
+</html>
