@@ -57,8 +57,11 @@ body {
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .form-group label {
@@ -287,13 +290,25 @@ h1 {
     font-weight: 600;
 }
 
+.time-display {
+    text-align: center;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 1.1em;
+    color: #333;
+    margin: -20px auto 20px auto;
+    width: fit-content;
+}
+
 .form-section {
     display: flex;
     flex-direction: column;
     margin-bottom: 25px;
-    gap: 15px;
+    gap: 20px;
     background: white;
-    padding: 25px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
@@ -308,12 +323,14 @@ h1 {
 .form-section select,
 .form-section textarea {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
+    padding: 14px;
+    margin-bottom: 0;
     transition: all 0.3s ease;
     border: 2px solid #e2e8f0;
     background: #f8fafc;
     box-sizing: border-box;
+    font-size: 1em;
+    border-radius: 8px;
 }
 
 .form-section input:focus,
@@ -327,7 +344,8 @@ h1 {
 .form-section label {
     font-weight: 500;
     color: #4a5568;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-size: 0.95em;
 }
 
 label {
@@ -396,7 +414,19 @@ button:hover {
     transition: all 0.3s ease;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+}
+
+.record-details {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 4px;
+    display: block;
+}
+
+.record-details i {
+    margin-right: 5px;
+    color: #667eea;
 }
 
 #income-records li:hover {
@@ -657,4 +687,30 @@ button:hover {
     input, select, button {
         width: 100%;
     }
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-box h4 {
+    color: #0d6efd;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.stat-box p {
+    margin: 0.5rem 0;
+    color: #495057;
 }

@@ -45,12 +45,29 @@ function makeNiceDate(date) {
 // Function to get product price
 function getProductPrice(product) {
     const prices = {
+        // Food Items
         'Longganisa': 75,
         'Siomai': 80,
+        
+        // Soft Drinks
         'Coke': 25,
         'MT': 25,
         'Royal': 25,
-        'Sprite': 25
+        'Sprite': 25,
+        
+        // Snacks
+        'Chippy': 15,
+        'Nova': 15,
+        'Piattos': 15,
+        'V-Cut': 15,
+        'Clover': 15,
+        
+        // Instant Noodles
+        'Lucky Me Pancit Canton': 20,
+        'Lucky Me Beef': 18,
+        'Lucky Me Chicken': 18,
+        'Payless': 15,
+        'Cup Noodles': 25
     };
     return prices[product] || 0;
 }
@@ -96,6 +113,7 @@ function addIncome() {
     const product = productSelect.value;
     const currentDate = new Date();
     const niceDate = makeNiceDate(currentDate);
+    const currentTime = currentDate.toLocaleTimeString();
     const quantity = parseInt(document.getElementById("quantity").value) || 1;
     const price = getProductPrice(product);
     const amount = price * quantity;
@@ -114,8 +132,13 @@ function addIncome() {
     // Add the new entry
     incomeData[niceDate].entries.push({
         product: product,
-        amount: amount,  // This is already the total (price * quantity)
-        quantity: quantity
+        amount: amount,  // This is already the total (price * quantity) 
+        quantity: quantity,
+        time: currentTime,
+        time: currentTime,
+        customerName: document.getElementById("customerName").value || 'Anonymous',
+        paymentMethod: document.getElementById("paymentMethod").value,
+        notes: document.getElementById("notes").value || ''
     });
 
     saveIncomeData();
@@ -163,7 +186,13 @@ function viewIncome() {
             
             // Create the display content
             const contentSpan = document.createElement("span");
-            contentSpan.textContent = `${date}: ${entry.product} - ₱${entry.amount.toFixed(2)} (Quantity: ${entry.quantity})`;
+            contentSpan.innerHTML = `
+                <strong>${date}</strong> ${entry.time || ''}: ${entry.product} - ₱${entry.amount.toFixed(2)} (Quantity: ${entry.quantity})<br>
+                <span class="record-details">
+                    <i class="fas fa-user"></i> ${entry.customerName || 'Anonymous'} | 
+                    <i class="fas fa-credit-card"></i> ${entry.paymentMethod || 'Cash'} 
+                    ${entry.notes ? `<br><i class="fas fa-sticky-note"></i> ${entry.notes}` : ''}
+                </span>`;
             
             // Create edit button
             const editBtn = document.createElement("button");
@@ -190,21 +219,89 @@ function viewIncome() {
 function editRecord(date, index) {
     const record = incomeData[date].entries[index];
     
-    // Populate form with existing data
-    document.getElementById("softdrinks").value = record.product;
+    // Store the current record details for later reference
+    sessionStorage.setItem('editingRecord', JSON.stringify({
+        date: date,
+        index: index
+    }));
     
-    document.getElementById("quantity").value = record.quantity;
+    // If we're on the records page, redirect to the main page for editing
+    if (window.location.pathname.includes('records.html')) {
+        window.location.href = 'index.html?edit=true';
+        return;
+    }
+    
+    // Populate form with existing data
+    const softdrinksSelect = document.getElementById("softdrinks");
+    const quantityInput = document.getElementById("quantity");
+    const customerNameInput = document.getElementById("customerName");
+    const paymentMethodSelect = document.getElementById("paymentMethod");
+    const notesInput = document.getElementById("notes");
+    
+    if (softdrinksSelect) softdrinksSelect.value = record.product;
+    if (quantityInput) quantityInput.value = record.quantity;
+    if (customerNameInput) customerNameInput.value = record.customerName || '';
+    if (paymentMethodSelect) paymentMethodSelect.value = record.paymentMethod || 'cash';
+    if (notesInput) notesInput.value = record.notes || '';
+    
     updateAmount(); // Update the amount based on product and quantity
     
-    // Remove the old record
-    incomeData[date].entries.splice(index, 1);
-    if (incomeData[date].entries.length === 0) {
-        delete incomeData[date];
+    // Change the Add Transaction button to Update
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) {
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Transaction';
+        submitBtn.onclick = () => updateRecord(date, index);
     }
+}
+
+function updateRecord(date, index) {
+    const record = incomeData[date].entries[index];
+    
+    // Get updated values
+    const product = document.getElementById("softdrinks").value;
+    const quantity = parseInt(document.getElementById("quantity").value) || 1;
+    const amount = parseFloat(document.getElementById("amount").value);
+    const customerName = document.getElementById("customerName").value;
+    const paymentMethod = document.getElementById("paymentMethod").value;
+    const notes = document.getElementById("notes").value;
+    
+    // Update the record
+    record.product = product;
+    record.quantity = quantity;
+    record.amount = amount;
+    record.customerName = customerName || 'Anonymous';
+    record.paymentMethod = paymentMethod;
+    record.notes = notes;
     
     saveIncomeData();
     viewIncome();
+    
+    // Reset form and button
+    const form = document.querySelector('.form-section');
+    if (form) form.reset();
+    
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) {
+        submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Add Transaction';
+        submitBtn.onclick = addIncome;
+    }
+    
+    alert('Record updated successfully!');
 }
+
+// Add this to your DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", () => {
+    // ... existing code ...
+    
+    // Check if we're editing a record
+    if (window.location.search.includes('edit=true')) {
+        const editingRecord = JSON.parse(sessionStorage.getItem('editingRecord'));
+        if (editingRecord) {
+            editRecord(editingRecord.date, editingRecord.index);
+            sessionStorage.removeItem('editingRecord');
+        }
+    }
+});
 
 function deleteRecord(date, index) {
     if (confirm("Are you sure you want to delete this record?")) {
@@ -312,7 +409,7 @@ function displaySortedEntries(entries) {
 
 function incomeSummary() {
     const summarySection = document.getElementById("summary-section");
-    if (!summarySection) return; // Exit if summary section doesn't exist on this page
+    if (!summarySection) return;
     
     const today = makeNiceDate(new Date());
     
@@ -325,6 +422,34 @@ function incomeSummary() {
         return sum + data.entries.reduce((daySum, entry) => daySum + entry.quantity, 0);
     }, 0);
     
+    // Calculate product-wise stats
+    const productStats = {};
+    Object.values(incomeData).forEach(data => {
+        data.entries.forEach(entry => {
+            if (!productStats[entry.product]) {
+                productStats[entry.product] = {
+                    quantity: 0,
+                    amount: 0
+                };
+            }
+            productStats[entry.product].quantity += entry.quantity;
+            productStats[entry.product].amount += entry.amount;
+        });
+    });
+
+    // Find best selling product
+    let bestSeller = {product: '', quantity: 0};
+    let topRevenue = {product: '', amount: 0};
+    
+    Object.entries(productStats).forEach(([product, stats]) => {
+        if (stats.quantity > bestSeller.quantity) {
+            bestSeller = {product, quantity: stats.quantity};
+        }
+        if (stats.amount > topRevenue.amount) {
+            topRevenue = {product, amount: stats.amount};
+        }
+    });
+    
     const totalDays = Object.keys(incomeData).length;
     const averageIncome = totalDays > 0 ? totalIncome / totalDays : 0;
     
@@ -333,19 +458,29 @@ function incomeSummary() {
     const todayIncome = todayData.entries.reduce((sum, entry) => sum + entry.amount, 0);
     const todayQuantity = todayData.entries.reduce((sum, entry) => sum + entry.quantity, 0);
     
-    // Show summary
+    // Show enhanced summary with quick stats
     summarySection.innerHTML = `
         <div class="summary-total">
-            <h3>Total Summary</h3>
-            Total Days Recorded: ${totalDays} <br>
-            Total Income: ₱${totalIncome.toFixed(2)} <br>
-            Total Quantity Sold: ${totalQuantity} <br>
-            Average Daily Income: ₱${averageIncome.toFixed(2)}
-        </div>
-        <div class="summary-today">
-            <h3>Today's Summary (${today})</h3>
-            Today's Income: ₱${todayIncome.toFixed(2)} <br>
-            Today's Quantity Sold: ${todayQuantity} <br>
+            <h3>Quick Stats</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>Overall Performance</h4>
+                    <p>Total Revenue: ₱${totalIncome.toFixed(2)}</p>
+                    <p>Total Items Sold: ${totalQuantity}</p>
+                    <p>Average Daily Income: ₱${averageIncome.toFixed(2)}</p>
+                    <p>Total Days: ${totalDays}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Today's Performance</h4>
+                    <p>Today's Revenue: ₱${todayIncome.toFixed(2)}</p>
+                    <p>Items Sold Today: ${todayQuantity}</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Top Performers</h4>
+                    <p>Best Seller: ${bestSeller.product} (${bestSeller.quantity} units)</p>
+                    <p>Highest Revenue: ${topRevenue.product} (₱${topRevenue.amount.toFixed(2)})</p>
+                </div>
+            </div>
         </div>
     `;
 }
@@ -371,9 +506,9 @@ function exportToCSV() {
         return;
     }
 
-    const csvContent = "Date,Product,Quantity,Amount\n" + 
+    const csvContent = "Date,Time,Product,Quantity,Amount,Customer,Payment Method,Notes\n" + 
         entries.map(entry => 
-            `${entry.date},${entry.product},${entry.quantity},${entry.amount}`
+            `${entry.date},${entry.time || ''},${entry.product},${entry.quantity},${entry.amount},${entry.customerName || 'Anonymous'},${entry.paymentMethod || 'Cash'},${entry.notes || ''}`
         ).join("\n");
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -386,6 +521,21 @@ function exportToCSV() {
     link.click();
     document.body.removeChild(link);
 }
+// Update time display
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    const dateString = now.toLocaleDateString();
+    const timeDisplays = document.querySelectorAll('#current-time');
+    timeDisplays.forEach(display => {
+        display.textContent = `${dateString} ${timeString}`;
+    });
+}
+
+// Update time every second
+setInterval(updateTime, 1000);
+updateTime(); // Initial call
+
 
 function resetAll() {
     if (confirm("Are you sure you want to reset all data? This cannot be undone!")) {
@@ -394,49 +544,37 @@ function resetAll() {
             incomeData = {};
             localStorage.removeItem("incomeData");
             
-            // Reset form fields
+            // Reset form fields if they exist
             const form = document.querySelector('.form-section');
-            const inputs = form.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                if (input.type === 'number') {
-                    input.value = input.id === 'quantity' ? '1' : '';
-                } else if (input.type === 'date') {
-                    input.value = '';
-                } else if (input.tagName === 'SELECT') {
-                    input.selectedIndex = 0;
-                }
-            });
+            if (form) {
+                const softdrinksSelect = document.getElementById("softdrinks");
+                const quantityInput = document.getElementById("quantity");
+                const amountInput = document.getElementById("amount");
+                
+                if (softdrinksSelect) softdrinksSelect.selectedIndex = 0;
+                if (quantityInput) quantityInput.value = "1";
+                if (amountInput) amountInput.value = "";
+            }
             
-            // Clear displays with animation
+            // Clear income records if they exist
             const incomeRecords = document.getElementById("income-records");
-            incomeRecords.style.opacity = '0';
-            setTimeout(() => {
+            if (incomeRecords) {
                 incomeRecords.innerHTML = "<li>No income data recorded yet.</li>";
-                incomeRecords.style.opacity = '1';
-            }, 300);
+            }
             
-            // Reset summary with animation
-            const summarySection = document.getElementById("summary-section");
-            summarySection.style.opacity = '0';
-            setTimeout(() => {
-                summarySection.innerHTML = `
-                    Total Days Recorded: 0 <br>
-                    Total Income: ₱0.00 <br>
-                    Total Quantity Sold: 0 <br>
-                    Average Daily Income: ₱0.00
-                `;
-                summarySection.style.opacity = '1';
-            }, 300);
+            // Update summary if it exists
+            if (document.getElementById("summary-section")) {
+                incomeSummary();
+            }
+            
+            // Update today's summary if elements exist
+            updateTodaysSummary();
             
             // Show success message
-            const successMessage = document.createElement('div');
-            successMessage.className = 'success-message';
-            successMessage.textContent = 'All data has been reset successfully!';
-            document.querySelector('.container').appendChild(successMessage);
+            alert('All data has been reset successfully!');
             
-            setTimeout(() => {
-                successMessage.remove();
-            }, 3000);
+            // Refresh the view
+            viewIncome();
             
         } catch (error) {
             console.error('Error during reset:', error);

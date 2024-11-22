@@ -16,6 +16,7 @@
             <img src="folder.png" alt="Store Icon" class="header-icon">
             Records
         </h1>
+        <div id="current-time" class="time-display"></div>
         <a href="index.html" class="nav-button" aria-label="Return to home page">
             <i class="fas fa-home"></i> Home
         </a>
@@ -83,6 +84,7 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="time-display.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             loadIncomeData(); // Load saved data when records page loads
