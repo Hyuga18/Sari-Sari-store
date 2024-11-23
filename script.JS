@@ -72,7 +72,6 @@ function getProductPrice(product) {
     return prices[product] || 0;
 }
 
-// Function to update amount based on product and quantity
 function updateAmount() {
     const productSelect = document.getElementById("softdrinks");
     const quantity = parseInt(document.getElementById("quantity").value) || 1;
