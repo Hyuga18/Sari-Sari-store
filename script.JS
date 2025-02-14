@@ -50,10 +50,10 @@ function getProductPrice(product) {
         'Siomai': 80,
         
         // Soft Drinks
-        'Coke': 25,
-        'MT': 25,
-        'Royal': 25,
-        'Sprite': 25,
+        'Coke': 30,
+        'MT': 30,
+        'Royal': 30,
+        'Sprite': 30,
         
         // Snacks
         'Chippy': 15,
